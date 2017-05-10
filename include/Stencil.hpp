@@ -15,7 +15,7 @@ struct Stencil{
 	std::array<std::array<ValueT,reach>, dim>	neighbMax;		
 
 
-	Stencil(const ValueT & c, 
+	constexpr Stencil(const ValueT & c, 
 			const std::array<std::array<ValueT,reach>, dim> & nMin,
 			const std::array<std::array<ValueT,reach>, dim> & nMax)
 	: center(c), neighbMin(nMin), neighbMax(nMax) {};

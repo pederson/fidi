@@ -60,7 +60,5 @@ struct Stencil{
 };
 
 
-
-
 }// end namespace fidi
 #endif

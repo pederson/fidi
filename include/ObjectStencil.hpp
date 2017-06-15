@@ -20,7 +20,8 @@ struct ObjectStencil : public ValueT{
 
 	ObjectStencil & operator=(const ValueT & c){
 		ObjectStencil s(c);
-		std::swap(*this, s);
+		std::swap(s.neighbMin, neighbMin);
+		std::swap(s.neighbMax, neighbMax);
 		return *this;
 	}
 

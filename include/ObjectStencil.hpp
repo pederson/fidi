@@ -16,7 +16,13 @@ struct ObjectStencil : public ValueT{
 	std::array<std::array<const NeighborType *,reach>, dim>	neighbMin;
 	std::array<std::array<const NeighborType *,reach>, dim>	neighbMax;		
 
-	ObjectStencil() : ValueT(){};
+	ObjectStencil() : ValueT(){
+		for (auto i=0; i<dim; i++){
+			for (auto j=0; j<reach; j++){
+				neighbMin[i][j] = nullptr;
+				neighbMax[i][j] = nullptr;
+			}
+	}};
 
 	ObjectStencil(const ObjectStencil & o) = default;
 
@@ -59,6 +65,15 @@ struct ObjectStencil : public ValueT{
 	constexpr void setNeighborMin(const NeighborType & val){std::get<r>(std::get<d>(neighbMin)) = &val;};
 	template <std::size_t d, std::size_t r=reach-1>
 	constexpr void setNeighborMax(const NeighborType & val){std::get<r>(std::get<d>(neighbMax)) = &val;};
+
+
+	// runtime get pointer
+	constexpr const NeighborType * getNeighborMinPtr(std::size_t d, std::size_t r=reach-1) const{
+		return neighbMin[d][r];
+	};
+	constexpr const NeighborType * getNeighborMaxPtr(std::size_t d, std::size_t r=reach-1) const{
+		return neighbMax[d][r];
+	};
 };
 
 

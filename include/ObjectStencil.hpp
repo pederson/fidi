@@ -87,12 +87,19 @@ template<std::size_t dim,
 		 std::size_t reach,
 		 class ValueT>
 struct ObjectStencil : public ValueT{
-	typedef ObjectStencil<dim, reach, ValueT>			NeighborType;
+private:
+	typedef ObjectStencil<dim, reach, ValueT>		NeighborType;
+	typedef NeighborType							GhostType;
 
 	// ValueT										center;
 	std::array<std::array<NeighborType *,reach>, dim>	neighbMin;
 	std::array<std::array<NeighborType *,reach>, dim>	neighbMax;		
 
+	// Ghost values
+	std::array<std::array<std::shared_ptr<GhostType>,reach>, dim>	ghostMin;
+	std::array<std::array<std::shared_ptr<GhostType>,reach>, dim>	ghostMax;	
+
+public:
 	ObjectStencil() : ValueT(){
 		for (auto i=0; i<dim; i++){
 			for (auto j=0; j<reach; j++){
@@ -150,6 +157,28 @@ struct ObjectStencil : public ValueT{
 	};
 	constexpr NeighborType * getNeighborMaxPtr(std::size_t d, std::size_t r=reach-1) const{
 		return neighbMax[d][r];
+	};
+
+	// runtime add ghost cells
+	void addGhostMin(std::size_t d, std::size_t r=reach-1){
+		ghostMin[d][r] = std::make_unique<GhostType>();
+		ghostMin[d][r]->setNeighborMax(*this,d,r);
+		setNeighborMin(*ghostMin[d][r],d,r);
+	};
+	void addGhostMax(std::size_t d, std::size_t r=reach-1){
+		ghostMax[d][r] = std::make_unique<GhostType>();
+		ghostMax[d][r]->setNeighborMin(*this,d,r);
+		setNeighborMax(*ghostMax[d][r],d,r);
+	};
+
+	// runtime remove ghost cells
+	void deleteGhostMin(std::size_t d, std::size_t r=reach-1){
+		neighbMin[d][r] = nullptr;
+		delete ghostMin[d][r];
+	};
+	void deleteGhostMax(std::size_t d, std::size_t r=reach-1){
+		neighbMax[d][r] = nullptr;
+		delete ghostMax[d][r];
 	};
 };
 
